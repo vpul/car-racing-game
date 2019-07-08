@@ -20,10 +20,10 @@ const vehicles = [
     'assets/taxi.png'
 ];
 
-const randomVehicle = vehicles[Math.floor(Math.random() * vehicles.length)];
+const randomVehicle = () => vehicles[Math.floor(Math.random() * vehicles.length)];
 
-const drivingVehicle = new Image();
-drivingVehicle.src = randomVehicle;
+const playerVehicle = new Image();
+playerVehicle.src = randomVehicle();
 
 skybox.onload = () => {
     let y = 0;
@@ -40,23 +40,43 @@ skybox.onload = () => {
     drawRoad();
 };
 
-let positionX = (canvas.width - drivingVehicle.width) / 2;
-const drawDrivingVehicle = () => {
-    console.log(positionX);
-    ctx.drawImage(drivingVehicle, positionX, canvas.height - drivingVehicle.height);
-    window.requestAnimationFrame(drawDrivingVehicle);
+let playerVehiclePosition = (canvas.width - playerVehicle.width) / 2;
+const drawplayerVehicle = () => {
+    ctx.drawImage(playerVehicle, playerVehiclePosition, canvas.height - playerVehicle.height);
+    window.requestAnimationFrame(drawplayerVehicle);
 }
 
-drivingVehicle.onload = () => {
-    drawDrivingVehicle();
+playerVehicle.onload = () => {
+    drawplayerVehicle();
+};
+
+let incommingVehicle = new Image();
+incommingVehicle.src = randomVehicle();
+
+let incommingVehiclePosX = [12, 70, 210][Math.floor(Math.random() * 3)];
+let incommingVehiclePosY = -incommingVehicle.height;
+
+incommingVehicle.onload = () => {
+    const drawIncommingVehicle = () => {
+        ctx.drawImage(incommingVehicle, incommingVehiclePosX, incommingVehiclePosY);
+        incommingVehiclePosY += 2;
+        if (incommingVehiclePosY >= canvas.height) {
+            // incommingVehicle.src = randomVehicle();
+            incommingVehiclePosX = [0, 70, 210][Math.floor(Math.random() * 3)];
+            incommingVehiclePosY = -incommingVehicle.height;
+
+        }
+        window.requestAnimationFrame(drawIncommingVehicle);
+    }
+    drawIncommingVehicle();
 };
 
 
 document.addEventListener('keydown', (e) => {
-    if (e.code === 'ArrowLeft' && positionX >= -66) {
-        positionX -= 6;
-    } else if (e.code === 'ArrowRight' && positionX < 222) {
-        positionX += 6;
+    if (e.code === 'ArrowLeft' && playerVehiclePosition >= 0) {
+        playerVehiclePosition -= 4;
+    } else if (e.code === 'ArrowRight' && playerVehiclePosition < canvas.width-playerVehicle.width) {
+        playerVehiclePosition += 4;
     }
 });
 
