@@ -98,9 +98,17 @@ incommingVehicle.onload = () => {
 
 document.addEventListener('keydown', (e) => {
     if (e.code === 'ArrowLeft' && playerVehiclePosition >= 0) {
-        playerVehiclePosition -= keyspeed;
+        if (playerVehiclePosition-keyspeed < 0) {
+            playerVehiclePosition = 0;
+        } else {
+            playerVehiclePosition -= keyspeed;
+        }
     } else if (e.code === 'ArrowRight' && playerVehiclePosition < canvas.width-playerVehicle.width) {
-        playerVehiclePosition += keyspeed;
+        if (playerVehiclePosition + keyspeed > canvas.width - playerVehicle.width) {
+            playerVehiclePosition = canvas.width - playerVehicle.width;
+        } else {
+            playerVehiclePosition += keyspeed;
+        }
     } else if (e.code === 'Space') {
         skyboxPosY+=15;
         incommingVehiclePosY += 10;
