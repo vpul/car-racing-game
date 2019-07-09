@@ -26,6 +26,14 @@ const vehicles = [
 
 const randomVehicle = () => vehicles[Math.floor(Math.random() * vehicles.length)];
 
+const gameOver = () => {
+    pause = true;
+    swal("Game Over!", `Your score is ${score}!`, "error")
+        .then(() => {
+            window.location.reload();
+        });
+}
+
 const playerVehicle = new Image();
 playerVehicle.src = randomVehicle();
 
@@ -76,11 +84,9 @@ incommingVehicle.onload = () => {
             incommingVehiclePosY = -incommingVehicle.height;
         } else if (incommingVehiclePosY + incommingVehicle.height > playerVehiclePositionY) {
             if (playerVehiclePosition > incommingVehiclePosX && playerVehiclePosition < incommingVehiclePosX + incommingVehicle.width || playerVehiclePosition + playerVehicle.width > incommingVehiclePosX && playerVehiclePosition + playerVehicle.width < incommingVehiclePosX + incommingVehicle.width) {
-                pause = true;
-                swal("Game Over!", `Your score is ${score}!`, "error")
-                .then(() => {
-                    window.location.reload();
-                });
+                gameOver();
+            } else if (incommingVehiclePosX > playerVehiclePosition && incommingVehiclePosX < playerVehiclePosition + playerVehicle.width || incommingVehiclePosX + incommingVehicle.width > playerVehiclePosition && incommingVehiclePosX + incommingVehicle.width < playerVehiclePosition + playerVehicle.width) {
+                gameOver();
             }
         }
         
