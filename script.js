@@ -9,6 +9,7 @@ const ctx = canvas.getContext('2d');
 let pause = false;
 let score = 0;
 let keyspeed = 12;
+let speed = 0;
 
 const skybox = new Image();
 skybox.src = 'assets/road.png';
@@ -35,15 +36,14 @@ const gameOver = () => {
         });
 }
 
-const playerVehicle = new Image();
-playerVehicle.src = randomVehicle();
+
 
 let skyboxPosY = 0;
 skybox.onload = () => {
     const drawRoad = () => {
         ctx.drawImage(skybox, 0, skyboxPosY - canvas.height, canvas.width, canvas.height * 2);
         //ctx.drawImage(skybox, 0, skyboxPosY, canvas.width, canvas.height);
-        skyboxPosY += 10;
+        skyboxPosY += 10 + speed;
         //Reset road position
         if (skyboxPosY >= canvas.height) {
             skyboxPosY = 0;
@@ -54,65 +54,80 @@ skybox.onload = () => {
     drawRoad();
 };
 
-let incommingVehicle = new Image();
-incommingVehicle.src = randomVehicle();
 
-let incommingVehiclePosX = [12, 145, 285][Math.floor(Math.random() * 3)];
-let incommingVehiclePosY = -incommingVehicle.height;
+const moveIncommingVehicles = async () => {
+    let incommingVehicle = new Image();
+    incommingVehicle.src = randomVehicle();
 
-incommingVehicle.onload = () => {
-    const drawIncommingVehicle = () => {
-        ctx.drawImage(incommingVehicle, incommingVehiclePosX, incommingVehiclePosY);
-        if (pause) return;
-        incommingVehiclePosY += 2;
-        if (incommingVehiclePosY >= canvas.height) {
-            scoreElement.innerHTML = ++score;
-            keyspeed+= 15;
-            incommingVehicle.src = randomVehicle();
-            incommingVehiclePosX = [12, 145, 285][Math.floor(Math.random() * 3)];
-            incommingVehiclePosY = -incommingVehicle.height;
-        } else if (incommingVehiclePosY + incommingVehicle.height > playerVehiclePositionY) {
-            if (playerVehiclePositionX > incommingVehiclePosX && playerVehiclePositionX < incommingVehiclePosX + incommingVehicle.width || playerVehiclePositionX + playerVehicle.width > incommingVehiclePosX && playerVehiclePositionX + playerVehicle.width < incommingVehiclePosX + incommingVehicle.width) {
-                gameOver();
-            } else if (incommingVehiclePosX > playerVehiclePositionX && incommingVehiclePosX < playerVehiclePositionX + playerVehicle.width || incommingVehiclePosX + incommingVehicle.width > playerVehiclePositionX && incommingVehiclePosX + incommingVehicle.width < playerVehiclePositionX + playerVehicle.width) {
-                gameOver();
+    incommingVehicle.onload = () => {
+        let incommingVehiclePosX = [12, 145, 285][Math.floor(Math.random() * 3)];
+        let incommingVehiclePosY = -incommingVehicle.height;
+        const drawIncommingVehicle = () => {
+            ctx.drawImage(incommingVehicle, incommingVehiclePosX, incommingVehiclePosY);
+            if (pause) return;
+            incommingVehiclePosY += 2 + speed;
+            if (incommingVehiclePosY >= canvas.height) {
+                scoreElement.innerHTML = ++score;
+                // keyspeed += 15;
+                return;
+                incommingVehicle.src = randomVehicle();
+                incommingVehiclePosX = [12, 145, 285][Math.floor(Math.random() * 3)];
+                incommingVehiclePosY = -incommingVehicle.height;
+                
+            } else if (incommingVehiclePosY + incommingVehicle.height > playerVehiclePositionY) {
+                if (playerVehiclePositionX > incommingVehiclePosX && playerVehiclePositionX < incommingVehiclePosX + incommingVehicle.width || playerVehiclePositionX + playerVehicle.width > incommingVehiclePosX && playerVehiclePositionX + playerVehicle.width < incommingVehiclePosX + incommingVehicle.width) {
+                    gameOver();
+                } else if (incommingVehiclePosX > playerVehiclePositionX && incommingVehiclePosX < playerVehiclePositionX + playerVehicle.width || incommingVehiclePosX + incommingVehicle.width > playerVehiclePositionX && incommingVehiclePosX + incommingVehicle.width < playerVehiclePositionX + playerVehicle.width) {
+                    gameOver();
+                }
             }
+            window.requestAnimationFrame(drawIncommingVehicle);
         }
-        window.requestAnimationFrame(drawIncommingVehicle);
-    }
-    drawIncommingVehicle();
-};
+        drawIncommingVehicle();
+    };
+} 
+
+setInterval(moveIncommingVehicles, 5400);
+
+const playerVehicle = new Image();
+playerVehicle.src = randomVehicle();
 
 let playerVehiclePositionX, playerVehiclePositionY;
+let playerVehicleSpeed = 0;
 
 playerVehicle.onload = () => {
     playerVehiclePositionX = (canvas.width - playerVehicle.width) / 2;
     playerVehiclePositionY = canvas.height - playerVehicle.height;
     const drawplayerVehicle = () => {
         ctx.drawImage(playerVehicle, playerVehiclePositionX, playerVehiclePositionY);
+        if (playerVehiclePositionX + playerVehicleSpeed > canvas.width - playerVehicle.width) {
+            playerVehiclePositionX = canvas.width - playerVehicle.width;
+        } else if (playerVehiclePositionX + playerVehicleSpeed < 0) {
+            playerVehiclePositionX = 0;
+        } else {
+            playerVehiclePositionX += playerVehicleSpeed;
+        } 
         if (pause) return;
         window.requestAnimationFrame(drawplayerVehicle);
     }
     drawplayerVehicle();
 };
 
-
 document.addEventListener('keydown', (e) => {
     if (e.code === 'ArrowLeft' && playerVehiclePositionX >= 0) {
-        if (playerVehiclePositionX-keyspeed < 0) {
-            playerVehiclePositionX = 0;
-        } else {
-            playerVehiclePositionX -= keyspeed;
-        }
+        playerVehicleSpeed = -12;
     } else if (e.code === 'ArrowRight' && playerVehiclePositionX < canvas.width-playerVehicle.width) {
-        if (playerVehiclePositionX + keyspeed > canvas.width - playerVehicle.width) {
-            playerVehiclePositionX = canvas.width - playerVehicle.width;
-        } else {
-            playerVehiclePositionX += keyspeed;
-        }
+        playerVehicleSpeed = 12;
     } else if (e.code === 'Space') {
-        skyboxPosY+=15;
-        incommingVehiclePosY += 10;
+        speed = 15;
+    }
+});
+
+document.addEventListener('keyup', (e) => {
+    if (e.code === 'Space') {
+        speed = 0;
+    } else if (e.code === 'ArrowRight' || 'ArrowLeft') {
+        playerVehicleSpeed = 0;
     }
 });
 
