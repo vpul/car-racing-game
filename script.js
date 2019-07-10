@@ -66,16 +66,15 @@ incommingVehicle.onload = () => {
         if (pause) return;
         incommingVehiclePosY += 2;
         if (incommingVehiclePosY >= canvas.height) {
-            score++;
-            scoreElement.innerHTML = score;
+            scoreElement.innerHTML = ++score;
             keyspeed+= 15;
             incommingVehicle.src = randomVehicle();
             incommingVehiclePosX = [12, 145, 285][Math.floor(Math.random() * 3)];
             incommingVehiclePosY = -incommingVehicle.height;
         } else if (incommingVehiclePosY + incommingVehicle.height > playerVehiclePositionY) {
-            if (playerVehiclePosition > incommingVehiclePosX && playerVehiclePosition < incommingVehiclePosX + incommingVehicle.width || playerVehiclePosition + playerVehicle.width > incommingVehiclePosX && playerVehiclePosition + playerVehicle.width < incommingVehiclePosX + incommingVehicle.width) {
+            if (playerVehiclePositionX > incommingVehiclePosX && playerVehiclePositionX < incommingVehiclePosX + incommingVehicle.width || playerVehiclePositionX + playerVehicle.width > incommingVehiclePosX && playerVehiclePositionX + playerVehicle.width < incommingVehiclePosX + incommingVehicle.width) {
                 gameOver();
-            } else if (incommingVehiclePosX > playerVehiclePosition && incommingVehiclePosX < playerVehiclePosition + playerVehicle.width || incommingVehiclePosX + incommingVehicle.width > playerVehiclePosition && incommingVehiclePosX + incommingVehicle.width < playerVehiclePosition + playerVehicle.width) {
+            } else if (incommingVehiclePosX > playerVehiclePositionX && incommingVehiclePosX < playerVehiclePositionX + playerVehicle.width || incommingVehiclePosX + incommingVehicle.width > playerVehiclePositionX && incommingVehiclePosX + incommingVehicle.width < playerVehiclePositionX + playerVehicle.width) {
                 gameOver();
             }
         }
@@ -84,12 +83,13 @@ incommingVehicle.onload = () => {
     drawIncommingVehicle();
 };
 
-let playerVehiclePosition = (canvas.width - playerVehicle.width) / 2;
-const playerVehiclePositionY = canvas.height - playerVehicle.height
+let playerVehiclePositionX, playerVehiclePositionY;
 
 playerVehicle.onload = () => {
+    playerVehiclePositionX = (canvas.width - playerVehicle.width) / 2;
+    playerVehiclePositionY = canvas.height - playerVehicle.height;
     const drawplayerVehicle = () => {
-        ctx.drawImage(playerVehicle, playerVehiclePosition, playerVehiclePositionY);
+        ctx.drawImage(playerVehicle, playerVehiclePositionX, playerVehiclePositionY);
         if (pause) return;
         window.requestAnimationFrame(drawplayerVehicle);
     }
@@ -98,17 +98,17 @@ playerVehicle.onload = () => {
 
 
 document.addEventListener('keydown', (e) => {
-    if (e.code === 'ArrowLeft' && playerVehiclePosition >= 0) {
-        if (playerVehiclePosition-keyspeed < 0) {
-            playerVehiclePosition = 0;
+    if (e.code === 'ArrowLeft' && playerVehiclePositionX >= 0) {
+        if (playerVehiclePositionX-keyspeed < 0) {
+            playerVehiclePositionX = 0;
         } else {
-            playerVehiclePosition -= keyspeed;
+            playerVehiclePositionX -= keyspeed;
         }
-    } else if (e.code === 'ArrowRight' && playerVehiclePosition < canvas.width-playerVehicle.width) {
-        if (playerVehiclePosition + keyspeed > canvas.width - playerVehicle.width) {
-            playerVehiclePosition = canvas.width - playerVehicle.width;
+    } else if (e.code === 'ArrowRight' && playerVehiclePositionX < canvas.width-playerVehicle.width) {
+        if (playerVehiclePositionX + keyspeed > canvas.width - playerVehicle.width) {
+            playerVehiclePositionX = canvas.width - playerVehicle.width;
         } else {
-            playerVehiclePosition += keyspeed;
+            playerVehiclePositionX += keyspeed;
         }
     } else if (e.code === 'Space') {
         skyboxPosY+=15;
