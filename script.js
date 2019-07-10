@@ -1,4 +1,5 @@
 const canvas = document.querySelector('canvas');
+const scoreElement = document.querySelector('#score span');
 
 canvas.width = 400;
 canvas.height = window.innerHeight;
@@ -53,18 +54,6 @@ skybox.onload = () => {
     drawRoad();
 };
 
-let playerVehiclePosition = (canvas.width - playerVehicle.width) / 2;
-const playerVehiclePositionY = canvas.height - playerVehicle.height
-
-playerVehicle.onload = () => {
-    const drawplayerVehicle = () => {
-        ctx.drawImage(playerVehicle, playerVehiclePosition, playerVehiclePositionY);
-        if (pause) return;
-        window.requestAnimationFrame(drawplayerVehicle);
-    }
-    drawplayerVehicle();
-};
-
 let incommingVehicle = new Image();
 incommingVehicle.src = randomVehicle();
 
@@ -78,6 +67,7 @@ incommingVehicle.onload = () => {
         incommingVehiclePosY += 2;
         if (incommingVehiclePosY >= canvas.height) {
             score++;
+            scoreElement.innerHTML = score;
             keyspeed+= 15;
             incommingVehicle.src = randomVehicle();
             incommingVehiclePosX = [12, 145, 285][Math.floor(Math.random() * 3)];
@@ -89,10 +79,21 @@ incommingVehicle.onload = () => {
                 gameOver();
             }
         }
-        
         window.requestAnimationFrame(drawIncommingVehicle);
     }
     drawIncommingVehicle();
+};
+
+let playerVehiclePosition = (canvas.width - playerVehicle.width) / 2;
+const playerVehiclePositionY = canvas.height - playerVehicle.height
+
+playerVehicle.onload = () => {
+    const drawplayerVehicle = () => {
+        ctx.drawImage(playerVehicle, playerVehiclePosition, playerVehiclePositionY);
+        if (pause) return;
+        window.requestAnimationFrame(drawplayerVehicle);
+    }
+    drawplayerVehicle();
 };
 
 

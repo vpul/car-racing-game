@@ -1,5 +1,5 @@
 canvas {
-    margin: 0 auto;
+    /* margin: 0 auto; */
     display: block;
 }
 
@@ -12,4 +12,23 @@ canvas {
 body {
     width: 100vw;
     height: 100vh;
+}
+
+aside {
+    width: 38%;
+    display: block;
+    overflow: auto;
+    float: left;
+}
+
+#score, #instruction {
+    font-family: 'DM Serif Display', serif;
+    font-size: 30px;
+    margin-left: 55px;
+    margin-top: 10px;
+}
+
+#instruction {
+    font-size: 18px;
+    max-width: 400px;
 }
