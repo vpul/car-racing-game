@@ -8,7 +8,6 @@ const ctx = canvas.getContext('2d');
 
 let pause = false;
 let score = 0;
-let keyspeed = 12;
 let speed = 0;
 
 const skybox = new Image();
@@ -43,7 +42,7 @@ skybox.onload = () => {
     const drawRoad = () => {
         ctx.drawImage(skybox, 0, skyboxPosY - canvas.height, canvas.width, canvas.height * 2);
         //ctx.drawImage(skybox, 0, skyboxPosY, canvas.width, canvas.height);
-        skyboxPosY += 10 + speed;
+        skyboxPosY += 10 + speed + score;
         //Reset road position
         if (skyboxPosY >= canvas.height) {
             skyboxPosY = 0;
@@ -55,25 +54,23 @@ skybox.onload = () => {
 };
 
 
-const moveIncommingVehicles = async () => {
+const spawnIncommingVehicles = (positionY) => {
     let incommingVehicle = new Image();
     incommingVehicle.src = randomVehicle();
-
+    let incommingVehiclePosX = [12, 145, 285][Math.floor(Math.random() * 3)];
+    let incommingVehiclePosY = positionY;
+    
     incommingVehicle.onload = () => {
-        let incommingVehiclePosX = [12, 145, 285][Math.floor(Math.random() * 3)];
-        let incommingVehiclePosY = -incommingVehicle.height;
         const drawIncommingVehicle = () => {
             ctx.drawImage(incommingVehicle, incommingVehiclePosX, incommingVehiclePosY);
+           
             if (pause) return;
-            incommingVehiclePosY += 2 + speed;
+            incommingVehiclePosY += 2 + speed + score;
             if (incommingVehiclePosY >= canvas.height) {
                 scoreElement.innerHTML = ++score;
-                // keyspeed += 15;
-                return;
-                incommingVehicle.src = randomVehicle();
+                //incommingVehicle.src = randomVehicle();
                 incommingVehiclePosX = [12, 145, 285][Math.floor(Math.random() * 3)];
                 incommingVehiclePosY = -incommingVehicle.height;
-                
             } else if (incommingVehiclePosY + incommingVehicle.height > playerVehiclePositionY) {
                 if (playerVehiclePositionX > incommingVehiclePosX && playerVehiclePositionX < incommingVehiclePosX + incommingVehicle.width || playerVehiclePositionX + playerVehicle.width > incommingVehiclePosX && playerVehiclePositionX + playerVehicle.width < incommingVehiclePosX + incommingVehicle.width) {
                     gameOver();
@@ -87,7 +84,8 @@ const moveIncommingVehicles = async () => {
     };
 } 
 
-setInterval(moveIncommingVehicles, 5400);
+spawnIncommingVehicles(-285);
+spawnIncommingVehicles(-750);
 
 const playerVehicle = new Image();
 playerVehicle.src = randomVehicle();
@@ -119,9 +117,10 @@ document.addEventListener('keydown', (e) => {
     } else if (e.code === 'ArrowRight' && playerVehiclePositionX < canvas.width-playerVehicle.width) {
         playerVehicleSpeed = 12;
     } else if (e.code === 'Space') {
-        speed = 15;
+        speed = 10;
     }
 });
+
 
 document.addEventListener('keyup', (e) => {
     if (e.code === 'Space') {
